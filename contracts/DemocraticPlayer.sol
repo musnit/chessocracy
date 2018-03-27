@@ -35,7 +35,7 @@ contract DemocraticPlayer is MintableToken {
 
   function initGame() external {
     require(!gameInProgress);
-    gameId = chess.initGame("DemocraticPlayer", true, 0);
+    gameId = chess.initGame("DemocraticPlayer", true, 9999999999999);
     startGame();
   }
 
