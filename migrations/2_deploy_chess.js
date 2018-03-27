@@ -9,8 +9,5 @@ module.exports = function(deployer) {
   deployer.link(ChessLogic, Chess);
   deployer.link(ELO, Chess); 
   deployer.deploy(Chess, true, {gas:4000000}); 
-
-
-
 };
 
