@@ -1,5 +1,5 @@
 var HDWalletProvider = require("truffle-hdwallet-provider");
-var secrets = require("./secrets.js");
+//var secrets = require("./secrets.js");
 
 module.exports = {
   networks: {
@@ -8,10 +8,10 @@ module.exports = {
       port: 8545,
       network_id: "*" // Match any network id
     },
-    ropsten: {
+/*    ropsten: {
       provider: new HDWalletProvider(secrets.mnemonic, "https://ropsten.infura.io/" + secrets.infura_apikey),
       network_id: 3,
       gas: 2708980
-    }
+    } */
   }
 };
