@@ -1,25 +1,29 @@
 pragma solidity 0.4.19;
 
 import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
+import "Chess.sol";
 
+/*
 interface Chess {
-  function submitMove(bytes4 _move) external;
-  function initGame() public;
-  function joinGame() public;
-  function surrender() public;
-  function claimWin() public;
-  function claimTime() public;
+  function move(bytes32 gameId, uint256 fromIndex, uint256 toIndex) public;
+  function initGame(string player1Alias, bool playAsWhite, uint turnTime) public returns (bytes32);
+  function joinGame(bytes32 gameId, string player2Alias) public;
+  function surrender(bytes32 gameId) public;
 }
+*/
 
 contract DemocraticPlayer is MintableToken {
 
   struct Round {
-    mapping (bytes4 => uint256) moveVotes;
+    mapping (bytes32 => uint256) moveVotes;
     mapping (address => bool) addressHasVoted;
-    bytes4 winningMove;
+    bytes32 winningMoveKey;
+    uint256 winningFromIndex;
+    uint256 winningToIndex;
   }
 
   Chess public chess;
+  bytes32 public gameId;
 
   mapping (address => uint256) public staked;
   bool public gameInProgress;
@@ -27,32 +31,45 @@ contract DemocraticPlayer is MintableToken {
   uint public roundNumber;
   mapping (uint => Round) public rounds;
 
-  function setGame(address _chessAddress) external onlyOwner {
+  function setChessContract(address _chessAddress) external onlyOwner {
+    require(!gameInProgress);
     chess = Chess(_chessAddress);
   }
 
-  function startGame() external onlyOwner {
-    gameInProgress = true;
-    roundNumber = 0;
+  function initGame() external {
+    require(!gameInProgress);
+    gameId = chess.initGame("DemocraticPlayer", true, 0);
+    startGame();
+  }
+
+  function joinGame(bytes32 _gameId) external {
+    require(!gameInProgress);
+    gameId = _gameId;
+    chess.joinGame(_gameId, "DemocraticPlayer");
+    startGame();
   }
 
   //Owner controlled for now, should maybe be based on a set period of N blocks
   //during which anyone can vote and after which voting stops and anyone can submit.
   function submitMove() external onlyOwner {
+    require(gameInProgress);
     Round storage round = rounds[roundNumber];
     roundNumber++;
-    chess.submitMove(round.winningMove);
+    chess.move(gameId, round.winningFromIndex, round.winningToIndex);
   }
 
-  function voteMove(bytes4 _move) external {
+  function voteMove(uint256 fromIndex, uint256 toIndex) external {
     require(gameInProgress);
     Round storage round = rounds[roundNumber];
     require(!round.addressHasVoted[msg.sender]);
     round.addressHasVoted[msg.sender] = true;
     uint256 senderVotes = staked[msg.sender];
-    round.moveVotes[_move] = round.moveVotes[_move].add(senderVotes);
-    if (round.moveVotes[_move] > round.moveVotes[round.winningMove]) {
-      round.winningMove = _move;
+    bytes32 moveKey = keccak256(fromIndex, toIndex);
+    round.moveVotes[moveKey] = round.moveVotes[moveKey].add(senderVotes);
+    if (round.moveVotes[moveKey] > round.moveVotes[round.winningMoveKey]) {
+      round.winningMoveKey = moveKey;
+      round.winningMoveFromIndex = fromIndex;
+      round.winningMoveToIndex = toIndex;
     }
   }
 
@@ -70,6 +87,11 @@ contract DemocraticPlayer is MintableToken {
     staked[msg.sender] = staked[msg.sender].sub(_value);
     balances[msg.sender] = balances[msg.sender].add(_value);
     return true;
+  }
+
+  function startGame() private onlyOwner {
+    gameInProgress = true;
+    roundNumber = 0;
   }
 
 }
