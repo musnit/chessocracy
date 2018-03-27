@@ -1,16 +1,13 @@
 pragma solidity 0.4.19;
 
 import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
-import "Chess.sol";
 
-/*
 interface Chess {
   function move(bytes32 gameId, uint256 fromIndex, uint256 toIndex) public;
   function initGame(string player1Alias, bool playAsWhite, uint turnTime) public returns (bytes32);
   function joinGame(bytes32 gameId, string player2Alias) public;
   function surrender(bytes32 gameId) public;
 }
-*/
 
 contract DemocraticPlayer is MintableToken {
 
