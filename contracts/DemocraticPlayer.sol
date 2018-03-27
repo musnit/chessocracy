@@ -15,8 +15,8 @@ contract DemocraticPlayer is MintableToken {
     mapping (bytes32 => uint256) moveVotes;
     mapping (address => bool) addressHasVoted;
     bytes32 winningMoveKey;
-    uint256 winningFromIndex;
-    uint256 winningToIndex;
+    uint256 winningMoveFromIndex;
+    uint256 winningMoveToIndex;
   }
 
   Chess public chess;
@@ -52,7 +52,7 @@ contract DemocraticPlayer is MintableToken {
     require(gameInProgress);
     Round storage round = rounds[roundNumber];
     roundNumber++;
-    chess.move(gameId, round.winningFromIndex, round.winningToIndex);
+    chess.move(gameId, round.winningMoveFromIndex, round.winningMoveToIndex);
   }
 
   function voteMove(uint256 fromIndex, uint256 toIndex) external {
