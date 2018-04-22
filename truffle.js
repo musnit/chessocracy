@@ -7,12 +7,14 @@ module.exports = {
       host: "127.0.0.1",
       port: 8545,
       network_id: "*", // Match any network id
-      gas: 4712388
+      gas: 4712388,
+      gasPrice: 1,
     },
 /*    ropsten: {
       provider: new HDWalletProvider(secrets.mnemonic, "https://ropsten.infura.io/" + secrets.infura_apikey),
       network_id: 3,
-      gas: 2708980
+      gas: 2708980,
+      gasPrice: 1,
     } */
   }
 };

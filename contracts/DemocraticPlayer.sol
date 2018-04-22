@@ -1,5 +1,3 @@
-pragma solidity 0.4.19;
-
 import "zeppelin-solidity/contracts/token/ERC20/MintableToken.sol";
 
 interface Chess {
@@ -28,17 +26,19 @@ contract DemocraticPlayer is MintableToken {
   uint public roundNumber;
   mapping (uint => Round) public rounds;
 
-  function setChessContract(address _chessAddress) external onlyOwner {
+  function setChess(address _chessAddress) external onlyOwner {
     require(!gameInProgress);
     chess = Chess(_chessAddress);
   }
 
+  //TODO: require chess contract is set
   function initGame() external {
     require(!gameInProgress);
     gameId = chess.initGame("DemocraticPlayer", true, 9999999999999);
     startGame();
   }
 
+  //TODO: require chess contract is set
   function joinGame(bytes32 _gameId) external {
     require(!gameInProgress);
     gameId = _gameId;
