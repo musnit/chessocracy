@@ -1,0 +1,7 @@
+Experimenting with on-chain chess that runs via state channels.
+
+Teams play against eachother, each taking on different governance systems to play various governance systems off against eachother.
+
+Project done with React/Truffle/Solidity
+
+Chess contracts based off of https://github.com/ise-ethereum/on-chain-chess
